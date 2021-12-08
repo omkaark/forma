@@ -1,0 +1,90 @@
+#canvas {
+  position: absolute;
+  border: 1px #000 solid;
+  top: 50px;
+  left: 50px;
+  width: calc(100vw - 100px);
+  height: calc(100vh - 100px);
+  overflow: scroll;
+}
+
+.rect {
+  position: relative;
+  top: 10px;
+  left: 10px;
+  background-color: #000;
+  width: 100px;
+  height: 100px;
+  cursor: grab;
+  margin: 0;
+}
+
+#rect0 {
+  z-index: 0;
+}
+
+#rect1 {
+  z-index: 1;
+}
+
+.rect:active {
+  cursor: grabbing;
+}
+
+.active .controller {
+  position: absolute;
+  border: 1px solid #000;
+  background-color: #fff;
+  width: 8px;
+  height: 8px;
+}
+
+.controller:active {
+  cursor: grabbing;
+}
+
+.ghost,
+.t-l,
+.t-r,
+.b-l,
+.b-r {
+  display: none;
+}
+
+.active .ghost {
+  display: unset;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+}
+
+.active .t-l {
+  display: unset;
+  top: -4px;
+  left: -4px;
+  cursor: nwse-resize;
+}
+
+.active .t-r {
+  display: unset;
+  top: -4px;
+  right: -4px;
+  cursor: nesw-resize;
+}
+
+.active .b-l {
+  display: unset;
+  bottom: -4px;
+  left: -4px;
+  cursor: nesw-resize;
+}
+
+.active .b-r {
+  display: unset;
+  bottom: -4px;
+  right: -4px;
+  cursor: nwse-resize;
+}
