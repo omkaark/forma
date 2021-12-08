@@ -3,8 +3,6 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
   <body>
-    <!--<canvas></canvas>-->
-    <button id="add-rect">Add rect</button>
     <div id="canvas">
       <!-- <div class="rect active" id="rect0">
         <div class="ghost" draggable="true"></div>
@@ -14,9 +12,27 @@
         <div class="controller b-r" draggable="true"></div>
       </div> -->
     </div>
-    <div id="info-drag"></div>
-    <div id="info-dragstart"></div>
-    <div id="info-dragend"></div>
+    <aside>
+      <section id="add-shapes">
+        <button id="add-rect">Add Rectangle</button>
+      </section>
+      <hr />
+      <section id="shape-info">
+        <p>Width: <span id="width-info"></span></p>
+        <p>Height: <span id="height-info"></span></p>
+        <div>
+          <label for="head">Colour: </label>
+          <input
+            type="color"
+            id="color-info"
+            name="color"
+            value="#fdffff"
+            onchange="console.log(this.value);"
+            oninput="console.log(this.value);"
+          />
+        </div>
+      </section>
+    </aside>
   </body>
   <script src="./index.js"></script>
 </html>

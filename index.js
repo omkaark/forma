@@ -1,6 +1,31 @@
 // TODO: Need to learn OpenGL
 
-var canvas = [];
+var canvas = {};
+
+var mouseClickPosWithinRect = {
+    x: null, y: null, reset: () => {
+        mouseClickPosWithinRect.x = null;
+        mouseClickPosWithinRect.y = null;
+    }
+};
+
+var ghostEventListeners = {
+    handleDragOver: (e) => {
+        e.preventDefault();
+    },
+    handleDrag: (e) => {
+        if (!e.screenX && !e.screenY) return;
+        outputInfo(e.target);
+        move(e.offsetX, e.offsetY);
+    },
+    handleDragStart: (e) => {
+        mouseClickPosWithinRect.x = e.pageX - e.target.parentElement.offsetLeft;
+        mouseClickPosWithinRect.y = e.pageY - e.target.parentElement.offsetTop;
+    },
+    handleDragEnd: (e) => {
+        mouseClickPosWithinRect.reset();
+    },
+};
 
 class Rectangle {
     constructor({ id, height = 100, width = 100 }) {
@@ -19,7 +44,7 @@ class Rectangle {
     changeShape(args) {
         this.element.style.width = args.width + "px";
         this.element.style.height = args.height + "px";
-        this.element.style.zIndex = args.zIndex;
+        // this.element.style.zIndex = String.toString(args.zIndex);
     }
 
     static addHelpers(element) {
@@ -38,24 +63,20 @@ class Rectangle {
 
 function addRect() {
     let rect = document.createElement('div');
-    let id = 'rect' + canvas.length;
+    let id = 'rect' + Object.keys(canvas).length;
     rect.setAttribute('id', id);
     rect.setAttribute('class', 'rect');
     Rectangle.addHelpers(rect);
     document.getElementById("canvas").appendChild(rect);
-    rect = new Rectangle({ id: canvas.length });
-    canvas.push(rect.element);
+    rect = new Rectangle({ id: Object.keys(canvas).length });
+    canvas[Object.keys(canvas).length] = rect.element;
     return id;
-}
-
-function output(name, e) {
-    document.getElementById("info-" + name).innerHTML = "(" + e.offsetX + ", " + e.offsetY + ")";
 }
 
 function move(x, y) {
     let elem = document.querySelector(".active");
-    elem.style.left = elem.offsetLeft - elem.offsetWidth / 2 + x + "px";
-    elem.style.top = elem.offsetTop - elem.offsetHeight / 2 + y + "px";
+    elem.style.left = elem.offsetLeft + x - mouseClickPosWithinRect.x + "px";
+    elem.style.top = elem.offsetTop + y - mouseClickPosWithinRect.y + "px";
 }
 
 function resize(x, y, classes) {
@@ -85,11 +106,9 @@ function resizeGhost() {
     elem.style.width = elem2.style.width;
     elem.style.height = elem2.style.height;
 }
-
-function handleObjectMove(e) {
-    if (!e.screenX && !e.screenY) return;
-    // console.log("id: " + e.target.parentElement.id, "x: " + e.offsetX, "y: " + (e.offsetY - e.target.offsetHeight * parseInt(e.target.parentElement.id.slice(4))));
-    move(e.offsetX, e.offsetY - e.target.offsetHeight * parseInt(e.target.parentElement.id.slice(4)));
+function outputInfo(element) {
+    document.getElementById("width-info").innerHTML = element.offsetWidth ? element.offsetWidth + "px" : "";
+    document.getElementById("height-info").innerHTML = element.offsetHeight ? element.offsetHeight + "px" : "";
 }
 
 function setElementActive(element) {
@@ -99,17 +118,48 @@ function setElementActive(element) {
     }
     if (element.parentElement.id !== "canvas") {
         element.parentElement.setAttribute('class', 'rect active');
+        outputInfo(element.parentElement)
     } else {
-        console.log(element.id);
         element.setAttribute('class', 'rect active');
+        outputInfo(element)
     }
     try {
-        document.querySelector(".active .ghost").removeEventListener("drag", handleObjectMove, true);
+        document.querySelector(".active .ghost").removeEventListener("dragover", ghostEventListeners.handleDragOver, false);
+        document.querySelector(".active .ghost").removeEventListener("drag", ghostEventListeners.handleDrag, false);
+        document.querySelector(".active .ghost").removeEventListener("dragstart", ghostEventListeners.handleDragStart, false);
+        document.querySelector(".active .ghost").removeEventListener("dragend", ghostEventListeners.handleDragEnd, false);
     } catch (e) {
         console.log(e);
     } finally {
-        document.querySelector(".active .ghost").addEventListener("drag", handleObjectMove, false);
+        document.querySelector(".active .ghost").addEventListener("dragover", ghostEventListeners.handleDragOver, false);
+        document.querySelector(".active .ghost").addEventListener("drag", ghostEventListeners.handleDrag, false);
+        document.querySelector(".active .ghost").addEventListener("dragstart", ghostEventListeners.handleDragStart, false);
+        document.querySelector(".active .ghost").addEventListener("dragend", ghostEventListeners.handleDragEnd, false);
     }
+}
+
+function handleKeyDown(e) {
+    let { keyCode } = e;
+    let { which } = e;
+    console.log(which);
+    switch (keyCode) {
+        case 8:
+            try {
+                const elem = document.querySelector('.active');
+                delete canvas[parseInt(elem.id.slice(4))];
+                elem.remove();
+                outputInfo(elem);
+            } catch (e) {
+                console.log(e);
+            }
+            break;
+        case 187:
+            console.log('+ clicked');
+    }
+}
+
+function handleColorChange(e) {
+    document.querySelector(".active").style.backgroundColor = document.querySelector("#color-info").value;
 }
 
 document.getElementById("add-rect").addEventListener("click", (e) => {
@@ -123,11 +173,6 @@ document.getElementById("add-rect").addEventListener("click", (e) => {
     document.querySelector("#" + id + " .ghost").addEventListener("click", (e) => {
         setElementActive(e.target.parentElement);
     }, false);
-
-    // document.querySelector(".active .ghost").addEventListener("drag", (e) => {
-    //     if (!e.screenX && !e.screenY) return;
-    //     move(e.offsetX, e.offsetY);
-    // }, false);
 
     const corners = document.querySelectorAll('#' + id + ' .controller');
     corners.forEach(function (element) {
@@ -145,6 +190,7 @@ document.getElementById("add-rect").addEventListener("click", (e) => {
         }, false);
 
         element.addEventListener("drag", (e) => {
+            outputInfo(e.target.parentElement);
             if (!e.screenX && !e.screenY) return;
             resize(e.offsetX, e.offsetY, e.target.classList);
         }, false);
@@ -152,38 +198,15 @@ document.getElementById("add-rect").addEventListener("click", (e) => {
     setElementActive(document.querySelector("#" + id));
 }, false);
 
-let sizeControllers = document.querySelectorAll('.active .controller');
-sizeControllers.forEach(function (element) {
-    element.addEventListener("dragover", (e) => {
-        e.preventDefault();
-    }, false);
-
-    element.addEventListener("dragstart", (e) => {
-        element.style.opacity = 0;
-    }, false);
-
-    element.addEventListener("dragend", (e) => {
-        element.style.opacity = 1;
-        resizeGhost();
-    }, false);
-
-    element.addEventListener("drag", (e) => {
-        if (!e.screenX && !e.screenY) return;
-        resize(e.offsetX, e.offsetY, e.target.classList);
-    }, false);
-});
-
-let rectControllers = document.querySelectorAll('.rect');
-rectControllers.forEach(function (element) {
-    element.addEventListener("click", (e) => {
-        setElementActive(e.target);
-    }, false);
-});
-
 document.querySelector("#canvas").addEventListener("click", (e) => {
     if (e.target === e.currentTarget) {
         for (let i of document.getElementsByClassName("rect")) {
             i.setAttribute("class", "rect");
         }
+        outputInfo(e);
     }
-})
+});
+
+document.querySelector("#color-info").addEventListener("input", handleColorChange, false);
+
+document.body.addEventListener("keydown", handleKeyDown, false);
