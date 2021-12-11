@@ -11,10 +11,19 @@
         <div class="controller b-l" draggable="true"></div>
         <div class="controller b-r" draggable="true"></div>
       </div> -->
+      <!-- <div class="text active" id="text0">
+        <p>Hey</p>
+        <div class="ghost" draggable="true"></div>
+        <div class="controller t-l" draggable="true"></div>
+        <div class="controller t-r" draggable="true"></div>
+        <div class="controller b-l" draggable="true"></div>
+        <div class="controller b-r" draggable="true"></div>
+      </div> -->
     </div>
     <aside>
       <section id="add-shapes">
         <button id="add-rect">Add Rectangle</button>
+        <button id="add-text">Add Text</button>
       </section>
       <hr />
       <section id="shape-info">
@@ -22,13 +31,15 @@
         <p>Height: <span id="height-info"></span></p>
         <div>
           <label for="head">Colour: </label>
+          <input type="color" id="color-info" name="color" />
+        </div>
+        <div id="text-info">
+          <label for="text-content">Text: </label>
           <input
-            type="color"
-            id="color-info"
-            name="color"
-            value="#fdffff"
-            onchange="console.log(this.value);"
-            oninput="console.log(this.value);"
+            id="text-content"
+            type="text"
+            name="text-content"
+            placeholder="Add text"
           />
         </div>
       </section>
