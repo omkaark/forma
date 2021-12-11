@@ -35,7 +35,8 @@ class KeyboardListenerHandlers { // Utility class
             const elem = document.querySelector('.active');
             canvas.elements.splice(parseInt(elem.id.slice(4)), 1);
             elem.remove();
-            Rectangle.outputInfo(elem);
+            document.querySelector('#text-info').style.display = "none";
+            Component.outputInfo(elem);
         } catch (err) {
             console.log(err);
         }
@@ -157,6 +158,7 @@ class Component {
         if (element.parentElement.classList.contains("active") || element.classList.contains("active")) return;
         if (element.parentElement.getAttribute('type') === 'text' || element.getAttribute('type') === 'text') {
             document.querySelector('#text-info').style.display = "unset";
+            document.querySelector('#text-font-size').value = 12;
         } else {
             document.querySelector('#text-info').style.display = "none";
         }
@@ -280,7 +282,11 @@ class Text extends Component {
     }
 
     static handleContentChange(e) {
-        canvas.active.childNodes[0].innerHTML = e.target.value;
+        canvas.active.childNodes[0].innerHTML = e.target.value ? e.target.value : "Add text";
+    }
+
+    static handleFontSizeChange(e) {
+        canvas.active.childNodes[0].style.fontSize = e.target.value;
     }
 
     static addText() {
@@ -385,5 +391,7 @@ document.querySelector("#canvas").addEventListener("click", (e) => {
 document.querySelector("#color-info").addEventListener("input", Component.handleColorChange, false);
 
 document.querySelector("#text-content").addEventListener("input", Text.handleContentChange, false);
+
+document.querySelector("#text-font-size").addEventListener("input", Text.handleFontSizeChange, false);
 
 document.body.addEventListener("keydown", KeyboardListenerHandlers.processKey, false);
