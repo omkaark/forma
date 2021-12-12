@@ -20,7 +20,6 @@ class FileHandlers {
 
             // Start file download.
             download("savefile.txt", document.querySelector('#canvas').innerHTML);
-
         }
     }
 
@@ -211,7 +210,7 @@ class Component {
         if (element.parentElement.classList.contains("active") || element.classList.contains("active")) return;
         if (element.parentElement.getAttribute('type') === 'text' || element.getAttribute('type') === 'text') {
             document.querySelector('#text-info').style.display = "unset";
-            document.querySelector('#text-font-size').value = 12;
+            document.querySelector('#text-font-size').value = 15;
         } else {
             document.querySelector('#text-info').style.display = "none";
         }
@@ -295,14 +294,14 @@ class Rectangle extends Component {
         Component.addFrame(rect);
         document.getElementById("canvas").appendChild(rect);
         rect = new Rectangle({ id: canvas.length });
-        canvas.elements.push(rect.element);
+        canvas.elements.push(rect);
         canvas.length += 1;
         return id;
     }
 }
 
 class Text extends Component {
-    constructor({ id, text = "Add text", fontSize = 12, color = "#00000d", textAlign = "center", height = 30, width = 200 }) {
+    constructor({ id, text = "Add text", fontSize = 15, color = "#00000d", textAlign = "center", height = 30, width = 200 }) {
         super();
         this.id = 'text' + String(id);
         this.element = document.getElementById('text' + id);
@@ -354,7 +353,7 @@ class Text extends Component {
         Text.addFrame(text);
         document.getElementById("canvas").appendChild(text);
         text = new Text({ id: canvas.length });
-        canvas.elements.push(text.element);
+        canvas.elements.push(text);
         canvas.length += 1;
         return id;
     }

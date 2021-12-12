@@ -1,0 +1,30 @@
+.CTAButton {
+  font-family: "Roboto";
+  display: block;
+  width: auto;
+  margin: auto !important;
+  height: 40px;
+  font-size: 20px;
+  border: 2.5px solid #000;
+  border-radius: 4px;
+  box-shadow: 4px 4px 1px #000;
+  transition: 0.1s;
+  &:hover {
+    transform: translateX(4px) translateY(4px);
+    box-shadow: 0px 0px 0px #000;
+  }
+}
+
+.CTAButtonFold {
+  background-color: #0f0;
+}
+
+.CTAButton1 {
+  background-color: #fff;
+}
+
+.CTAButton2 {
+  background-color: #ff0;
+  box-shadow: 4px 4px 1px #fff;
+  border-color: #fff;
+}

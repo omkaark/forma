@@ -1,12 +1,19 @@
 {
   "scripts": {
-    "start": "node server.js",
-    "hot": "nodemon --exec npm start",
-    "sass": "node-sass style.scss style.css"
+    "sass": "node-sass converttocss.scss button.css",
+    "build": "cp {*.css,index.html} ./prod && node buildscript.js && terser ./prod/index.js --output ./prod/index.js"
   },
   "dependencies": {
     "express": "^4.17.1",
     "nodemon": "^2.0.15"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "autoprefixer": "^10.4.0",
+    "css-minify": "^2.0.0",
+    "cssnano": "^5.0.12",
+    "javascript-obfuscator": "^3.0.0",
+    "postcss": "^8.4.4",
+    "terser": "^5.10.0"
+  }
 }

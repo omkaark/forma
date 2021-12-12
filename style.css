@@ -50,13 +50,19 @@
 }
 
 aside {
+  background-color: #eee;
   position: absolute;
   top: 0;
   left: calc(100vw - 300px);
-  margin: 10px;
+  padding: 10px;
   width: 280px;
   height: calc(100vh - 20px);
   overflow-y: scroll;
+}
+
+aside button {
+  height: 40px;
+  border-radius: 10px;
 }
 
 #canvas {
