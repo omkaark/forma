@@ -23,11 +23,11 @@ class KeyboardListenerHandlers { // Utility class
             case 40: // down
                 e.shiftKey ? Component.handleObjectMoveByKey.shiftDown(e) : Component.handleObjectMoveByKey.down(e);
                 break;
+            case 66: // B
+                e.shiftKey ? KeyboardListenerHandlers.handleShiftT() : null;
+                break;
             case 82: // R
                 e.shiftKey ? KeyboardListenerHandlers.handleShiftR() : null;
-                break;
-            case 84: // T
-                e.shiftKey ? KeyboardListenerHandlers.handleShiftT() : null;
                 break;
             default:
                 // console.log(this);

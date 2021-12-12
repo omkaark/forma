@@ -23,15 +23,16 @@
       <div id="intro-display">
         <p><b>How to use</b></p>
         <p>> Shift + r => Add a rectangle to the canvas</p>
-        <p>> Shift + t => Add a text box to the canvas</p>
+        <p>> Shift + b => Add a text box to the canvas</p>
         <p>
           > Arrow keys (up, down, left, right) => Move components on the canvas
         </p>
         <p>> Backspace => Delete active element</p>
         <p>> Use the side panel to edit the components</p>
+        <p>> Click help to bring this popup back</p>
         <p>> Have fun!</p>
         <button
-          onclick="document.querySelector('#intro').style.display = 'none'"
+          onclick='hideButton(); console.log(window.localStorage.getItem("firstTime")); window.localStorage.setItem("firstTime", false);'
         >
           Got it!
         </button>
@@ -89,4 +90,14 @@
     </aside>
   </body>
   <script src="./index.js"></script>
+  <script>
+    if (window.localStorage.getItem("firstTime")) {
+      document.querySelector("#intro").style.display = "none";
+    }
+  </script>
+  <script>
+    function hideButton() {
+      document.querySelector("#intro").style.display = "none";
+    }
+  </script>
 </html>
