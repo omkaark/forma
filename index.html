@@ -1,8 +1,42 @@
 <html>
   <head>
+    <title>Forma: UI/UX Development for Beginners</title>
+    <meta
+      property="og:title"
+      content="UseForma: UI/UX Development for Beginners"
+    />
+    <meta property="og:type" content="image" />
+    <meta property="og:url" content="https://useforma.xyz/" />
+    <meta property="og:image" content="./useForma.png" />
+    <link rel="shortcut icon" type="image/jpg" href="./useForma.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
+    <div id="intro">
+      <div id="intro-display">
+        <p><b>How to use</b></p>
+        <p>> Shift + r => Add a rectangle to the canvas</p>
+        <p>> Shift + t => Add a text box to the canvas</p>
+        <p>
+          > Arrow keys (up, down, left, right) => Move components on the canvas
+        </p>
+        <p>> Backspace => Delete active element</p>
+        <p>> Use the side panel to edit the components</p>
+        <p>> Have fun!</p>
+        <button
+          onclick="document.querySelector('#intro').style.display = 'none'"
+        >
+          Got it!
+        </button>
+      </div>
+    </div>
     <div id="canvas">
       <!-- <div class="rect active" id="rect0">
         <div class="ghost" draggable="true"></div>
@@ -24,6 +58,12 @@
       <section id="add-shapes">
         <button id="add-rect">Add Rectangle</button>
         <button id="add-text">Add Text</button>
+        <button
+          id="help"
+          onclick="document.querySelector('#intro').style.display = 'flex';"
+        >
+          Help
+        </button>
       </section>
       <hr />
       <section id="shape-info">
@@ -42,7 +82,7 @@
             id="text-font-size"
             name="text-font-size"
             type="number"
-            style="width: 50px"
+            style="width: 50px; font-size: 15px"
           />px
         </div>
       </section>

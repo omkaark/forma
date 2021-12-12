@@ -7,7 +7,9 @@ class KeyboardListenerHandlers { // Utility class
         let { which } = e;
         switch (which) {
             case 8: // backspace
-                KeyboardListenerHandlers.handleBackspace();
+                if (e.target.id != "text-content") {
+                    KeyboardListenerHandlers.handleBackspace();
+                }
                 break;
             case 37: // left
                 e.shiftKey ? Component.handleObjectMoveByKey.shiftLeft(e) : Component.handleObjectMoveByKey.left(e);
@@ -21,8 +23,11 @@ class KeyboardListenerHandlers { // Utility class
             case 40: // down
                 e.shiftKey ? Component.handleObjectMoveByKey.shiftDown(e) : Component.handleObjectMoveByKey.down(e);
                 break;
-            case 82: // +
-                e.shiftKey ? KeyboardListenerHandlers.handlePlus() : null;
+            case 82: // R
+                e.shiftKey ? KeyboardListenerHandlers.handleShiftR() : null;
+                break;
+            case 84: // T
+                e.shiftKey ? KeyboardListenerHandlers.handleShiftT() : null;
                 break;
             default:
                 // console.log(this);
@@ -42,8 +47,12 @@ class KeyboardListenerHandlers { // Utility class
         }
     }
 
-    static handlePlus() {
+    static handleShiftR() {
         document.querySelector('#add-rect').click();
+    }
+
+    static handleShiftT() {
+        document.querySelector('#add-text').click();
     }
 }
 
@@ -59,7 +68,6 @@ var ghostEventListeners = {
     },
     handleDrag: (e) => {
         if (!e.screenX && !e.screenY) return;
-        console.log(e)
         Component.outputInfo(e.target);
         Component.move(e.offsetX, e.offsetY);
     },
