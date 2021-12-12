@@ -247,6 +247,10 @@ class Component {
             document.querySelector(".active .ghost").addEventListener("dragend", ghostEventListeners.handleDragEnd, false);
             let color = document.querySelector(".active").style.backgroundColor.slice(4, -1).split(', ');
             document.querySelector('#color-info').value = color[0] ? "#" + componentToHex(parseInt(color[0])) + componentToHex(parseInt(color[1])) + componentToHex(parseInt(color[2])) : '#000001';
+            function componentToHex(c) {
+                var hex = c.toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+            }
         }
 
         if (element.parentElement.getAttribute('type') === 'text' || element.getAttribute('type') === 'text') {
