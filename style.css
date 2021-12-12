@@ -60,16 +60,10 @@ aside {
   overflow-y: scroll;
 }
 
-aside button {
-  height: 40px;
-  border-radius: 10px;
-}
-
 #canvas {
   position: absolute;
   top: 0;
   left: 0;
-  border: 1px #000 solid;
   width: calc(100vw - 300px);
   height: 100vh;
   overflow: scroll;

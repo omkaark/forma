@@ -1,6 +1,12 @@
 // TODO: Need to learn OpenGL
 
-var canvas = { length: 0, elements: [], active: null };
+var canvas = {
+    length: 0, elements: [], active: null, reset: () => {
+        canvas.length = 0;
+        canvas.elements = [];
+        canvas.active = null;
+    }
+};
 
 class FileHandlers {
     static saveFile() {
@@ -17,7 +23,6 @@ class FileHandlers {
 
                 document.body.removeChild(element);
             }
-
             // Start file download.
             download("savefile.txt", document.querySelector('#canvas').innerHTML);
         }
@@ -31,9 +36,14 @@ class FileHandlers {
             }
             var reader = new FileReader();
             reader.onload = function (e) {
+                canvas.reset();
                 var contents = e.target.result;
                 document.querySelector('#canvas').innerHTML = contents;
-                console.log(contents);
+                let components = document.querySelector('#canvas').childNodes;
+                for (let i = 0; i < components.length; i++) {
+                    components[i].classList.remove('active');
+                    Component.addEventListeners(components[i].id);
+                }
             };
             reader.readAsText(file);
         }
@@ -208,12 +218,6 @@ class Component {
 
     static setElementActive(element) {
         if (element.parentElement.classList.contains("active") || element.classList.contains("active")) return;
-        if (element.parentElement.getAttribute('type') === 'text' || element.getAttribute('type') === 'text') {
-            document.querySelector('#text-info').style.display = "unset";
-            document.querySelector('#text-font-size').value = 15;
-        } else {
-            document.querySelector('#text-info').style.display = "none";
-        }
 
         try { canvas.active.classList.remove("active") } catch (e) { };
 
@@ -241,7 +245,16 @@ class Component {
             document.querySelector(".active .ghost").addEventListener("drag", ghostEventListeners.handleDrag, false);
             document.querySelector(".active .ghost").addEventListener("dragstart", ghostEventListeners.handleDragStart, false);
             document.querySelector(".active .ghost").addEventListener("dragend", ghostEventListeners.handleDragEnd, false);
-            document.querySelector('#color-info').value = document.querySelector(".active").style.backgroundColor;
+            let color = document.querySelector(".active").style.backgroundColor.slice(4, -1).split(', ');
+            document.querySelector('#color-info').value = color[0] ? "#" + componentToHex(parseInt(color[0])) + componentToHex(parseInt(color[1])) + componentToHex(parseInt(color[2])) : '#000001';
+        }
+
+        if (element.parentElement.getAttribute('type') === 'text' || element.getAttribute('type') === 'text') {
+            document.querySelector('#text-info').style.display = "unset";
+            document.querySelector('#text-content').value = document.querySelector('.active p').innerHTML;
+            document.querySelector('#text-font-size').value = document.querySelector('.active p').style.fontSize.slice(0, -2);
+        } else {
+            document.querySelector('#text-info').style.display = "none";
         }
     }
 
@@ -272,6 +285,41 @@ class Component {
             corner.setAttribute('draggable', 'true')
             element.appendChild(corner);
         }
+    }
+
+    static addEventListeners(id) {
+        const mainElement = document.querySelector("#" + id);
+        mainElement.addEventListener("click", (e) => {
+            Component.setElementActive(e.target);
+        }, false);
+
+        document.querySelector("#" + id + " .ghost").addEventListener("click", (e) => {
+            Component.setElementActive(e.target.parentElement);
+        }, false);
+
+        const corners = document.querySelectorAll('#' + id + ' .controller');
+        corners.forEach(function (element) {
+            console.log("Added listener to ", element)
+            element.addEventListener("dragover", (e) => {
+                e.preventDefault();
+            }, false);
+
+            element.addEventListener("dragstart", (e) => {
+                element.style.opacity = 0;
+            }, false);
+
+            element.addEventListener("dragend", (e) => {
+                element.style.opacity = 1;
+                Component.resizeGhost();
+            }, false);
+
+            element.addEventListener("drag", (e) => {
+                Component.outputInfo(e.target.parentElement);
+                if (!e.screenX && !e.screenY) return;
+                Component.resize(e.offsetX, e.offsetY, e.target.classList);
+            }, false);
+        });
+        Component.setElementActive(document.querySelector("#" + id));
     }
 }
 
@@ -433,10 +481,12 @@ document.getElementById("add-text").addEventListener("click", (e) => {
 
 document.querySelector("#canvas").addEventListener("click", (e) => {
     if (e.target === e.currentTarget) {
-        canvas.active.classList.remove("active");
-        document.querySelector('#text-info').style.display = "none";
-        Component.outputInfo(e);
-        canvas.active = null;
+        try {
+            canvas.active.classList.remove("active");
+            document.querySelector('#text-info').style.display = "none";
+            Component.outputInfo(e);
+            canvas.active = null;
+        } finally { return; }
     }
 });
 

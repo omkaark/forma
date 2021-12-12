@@ -1,0 +1,41 @@
+<div id="rect0" class="rect" type="rect" style="width: 100px; height: 100px">
+  <div class="ghost" draggable="true" style="width: 100px; height: 100px"></div>
+  <div class="controller t-l" draggable="true"></div>
+  <div class="controller t-r" draggable="true"></div>
+  <div class="controller b-l" draggable="true"></div>
+  <div class="controller b-r" draggable="true"></div>
+</div>
+<div
+  id="text1"
+  class="text"
+  type="text"
+  style="
+    width: 200px;
+    height: 30px;
+    font-size: 12px;
+    color: rgb(0, 0, 13);
+    text-align: center;
+    left: 264px;
+    top: 223px;
+  "
+>
+  <p>Add text</p>
+  <div class="ghost" draggable="true" style="width: 200px; height: 30px"></div>
+  <div class="controller b-r" draggable="true"></div>
+</div>
+<div
+  id="rect2"
+  class="rect active"
+  type="rect"
+  style="width: 100px; height: 100px; left: 519px; top: 184px"
+>
+  <div class="ghost" draggable="true" style="width: 100px; height: 100px"></div>
+  <div class="controller t-l" draggable="true"></div>
+  <div class="controller t-r" draggable="true"></div>
+  <div class="controller b-l" draggable="true"></div>
+  <div class="controller b-r" draggable="true"></div>
+</div>
+
+
+r0 
+t0 
