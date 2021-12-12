@@ -2,6 +2,51 @@
 
 var canvas = { length: 0, elements: [], active: null };
 
+class FileHandlers {
+    static saveFile() {
+        if (confirm("This will download an html file on your computer, do you consent?")) {
+            function download(filename, text) {
+                var element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', filename);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            }
+
+            // Start file download.
+            download("savefile.txt", document.querySelector('#canvas').innerHTML);
+
+        }
+    }
+
+    static loadFile(e) {
+        const readSingleFile = (e) => {
+            var file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var contents = e.target.result;
+                document.querySelector('#canvas').innerHTML = contents;
+                console.log(contents);
+            };
+            reader.readAsText(file);
+        }
+        try {
+            document.querySelector('#file-loader').removeEventListener('change', readSingleFile, false);
+        } finally {
+            document.querySelector('#file-loader').addEventListener('change', readSingleFile, false);
+        }
+        document.querySelector('#file-loader').click();
+    }
+}
+
 class KeyboardListenerHandlers { // Utility class
     static processKey(e) {
         let { which } = e;
@@ -396,10 +441,15 @@ document.querySelector("#canvas").addEventListener("click", (e) => {
     }
 });
 
+
 document.querySelector("#color-info").addEventListener("input", Component.handleColorChange, false);
 
 document.querySelector("#text-content").addEventListener("input", Text.handleContentChange, false);
 
 document.querySelector("#text-font-size").addEventListener("input", Text.handleFontSizeChange, false);
+
+document.querySelector("#save-file").addEventListener("click", FileHandlers.saveFile, false);
+
+document.querySelector("#load-file").addEventListener("click", FileHandlers.loadFile, false);
 
 document.body.addEventListener("keydown", KeyboardListenerHandlers.processKey, false);

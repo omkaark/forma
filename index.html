@@ -38,23 +38,7 @@
         </button>
       </div>
     </div>
-    <div id="canvas">
-      <!-- <div class="rect active" id="rect0">
-        <div class="ghost" draggable="true"></div>
-        <div class="controller t-l" draggable="true"></div>
-        <div class="controller t-r" draggable="true"></div>
-        <div class="controller b-l" draggable="true"></div>
-        <div class="controller b-r" draggable="true"></div>
-      </div> -->
-      <!-- <div class="text active" id="text0">
-        <p>Hey</p>
-        <div class="ghost" draggable="true"></div>
-        <div class="controller t-l" draggable="true"></div>
-        <div class="controller t-r" draggable="true"></div>
-        <div class="controller b-l" draggable="true"></div>
-        <div class="controller b-r" draggable="true"></div>
-      </div> -->
-    </div>
+    <div id="canvas"></div>
     <aside>
       <section id="add-shapes">
         <button id="add-rect">Add Rectangle</button>
@@ -65,6 +49,15 @@
         >
           Help
         </button>
+        <hr />
+        <button id="save-file">Save File</button>
+        <button id="load-file">Load File</button>
+        <input
+          style="display: none"
+          type="file"
+          id="file-loader"
+          value="Load File"
+        />
       </section>
       <hr />
       <section id="shape-info">
@@ -91,13 +84,27 @@
   </body>
   <script src="./index.js"></script>
   <script>
-    if (window.localStorage.getItem("firstTime")) {
-      document.querySelector("#intro").style.display = "none";
-    }
-  </script>
-  <script>
     function hideButton() {
       document.querySelector("#intro").style.display = "none";
     }
+    if (window.localStorage.getItem("firstTime")) {
+      hideButton();
+    }
   </script>
 </html>
+
+<!-- <div class="rect active" id="rect0">
+        <div class="ghost" draggable="true"></div>
+        <div class="controller t-l" draggable="true"></div>
+        <div class="controller t-r" draggable="true"></div>
+        <div class="controller b-l" draggable="true"></div>
+        <div class="controller b-r" draggable="true"></div>
+      </div> -->
+<!-- <div class="text active" id="text0">
+        <p>Hey</p>
+        <div class="ghost" draggable="true"></div>
+        <div class="controller t-l" draggable="true"></div>
+        <div class="controller t-r" draggable="true"></div>
+        <div class="controller b-l" draggable="true"></div>
+        <div class="controller b-r" draggable="true"></div>
+      </div> -->
