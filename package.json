@@ -1,7 +1,7 @@
 {
   "scripts": {
     "sass": "node-sass converttocss.scss button.css",
-    "build": "cp {*.css,index.html} ./prod && node buildscript.js && terser ./prod/index.js --output ./prod/index.js"
+    "build": "cp {*.css,index.html,useForma.png} ./prod && node buildscript.js && terser ./prod/index.js --output ./prod/index.js"
   },
   "dependencies": {
     "express": "^4.17.1",
