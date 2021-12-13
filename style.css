@@ -113,6 +113,11 @@ aside {
   cursor: grabbing;
 }
 
+#text-content {
+  height: 30px;
+  font-size: 15px;
+}
+
 .active .controller {
   position: absolute;
   border: 1px solid #000;

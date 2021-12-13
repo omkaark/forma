@@ -9,7 +9,7 @@ var canvas = {
     },
     getNewId: () => {
         canvas.length += 1;
-        return canvas.length;
+        return canvas.length - 1;
     }
 };
 
@@ -282,7 +282,10 @@ class Component {
 
         if (element.parentElement.getAttribute('type') === 'text' || element.getAttribute('type') === 'text') {
             document.querySelector('#text-info').style.display = "unset";
-            document.querySelector('#text-content').value = document.querySelector('.active p').innerHTML ? document.querySelector('.active p').innerHTML : "";
+            document.querySelector('#text-content').value = document.querySelector('.active p').innerHTML !== "" ? document.querySelector('.active p').innerHTML : (() => {
+                document.querySelector('.active p').innerHTML = document.querySelector('#text-content').placeholder;
+                return "";
+            })();
             document.querySelector('#text-font-size').value = document.querySelector('.active').style.fontSize.slice(0, -2);
         } else {
             document.querySelector('#text-info').style.display = "none";
@@ -395,7 +398,7 @@ class TextBox extends Component {
 
     static initText(element, args) {
         element.style.fontSize = args.fontSize;
-        element.children[0].innerHTML = "";
+        element.children[0].innerHTML = args.text;
         element.style.color = args.color;
         element.style.textAlign = args.textAlign;
     }
@@ -412,9 +415,6 @@ class TextBox extends Component {
     }
 
     static handleContentChange(e) {
-        if (document.querySelector('.active p').value) {
-            document.querySelector('.active p').innerHTML = document.querySelector('#text-content').placeholder;
-        }
         canvas.active.childNodes[0].innerHTML = e.target.value ? e.target.value : e.target.placeholder;
     }
 
