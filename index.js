@@ -1,12 +1,19 @@
 // TODO: Need to learn OpenGL
 
 var canvas = {
-    length: 0, elements: [], active: null, reset: () => {
+    length: 0, elements: [], active: null, copied: null, reset: () => {
         canvas.length = 0;
         canvas.elements = [];
         canvas.active = null;
+        canvas.copied = null;
+    },
+    getNewId: () => {
+        canvas.length += 1;
+        return canvas.length;
     }
 };
+
+
 
 class FileHandlers {
     static saveFile() {
@@ -59,11 +66,10 @@ class FileHandlers {
 class KeyboardListenerHandlers { // Utility class
     static processKey(e) {
         let { which } = e;
+        if (e.target.nodeName !== "BODY") return;
         switch (which) {
             case 8: // backspace
-                if (e.target.id != "text-content") {
-                    KeyboardListenerHandlers.handleBackspace();
-                }
+                KeyboardListenerHandlers.handleBackspace();
                 break;
             case 37: // left
                 e.shiftKey ? Component.handleObjectMoveByKey.shiftLeft(e) : Component.handleObjectMoveByKey.left(e);
@@ -78,13 +84,19 @@ class KeyboardListenerHandlers { // Utility class
                 e.shiftKey ? Component.handleObjectMoveByKey.shiftDown(e) : Component.handleObjectMoveByKey.down(e);
                 break;
             case 66: // B
-                e.shiftKey ? KeyboardListenerHandlers.handleShiftT() : null;
+                e.shiftKey ? KeyboardListenerHandlers.handleShiftB() : null;
+                break;
+            case 67: // C
+                e.metaKey || e.ctrlKey ? KeyboardListenerHandlers.handleCtrlC(e) : null;
+                console.log("hmm")
                 break;
             case 82: // R
                 e.shiftKey ? KeyboardListenerHandlers.handleShiftR() : null;
                 break;
+            case 86: // V
+                e.metaKey || e.ctrlKey ? KeyboardListenerHandlers.handleCtrlV(e) : null;
+                break;
             default:
-                // console.log(this);
                 return;
         }
     }
@@ -105,8 +117,23 @@ class KeyboardListenerHandlers { // Utility class
         document.querySelector('#add-rect').click();
     }
 
-    static handleShiftT() {
+    static handleShiftB() {
         document.querySelector('#add-text').click();
+    }
+
+    static handleCtrlC(e) {
+        try {
+            navigator.clipboard.writeText(document.querySelector('.active').innerHTML);
+        } catch (e) {
+
+        }
+    }
+
+    static async handleCtrlV(e) {
+        let cb = await navigator.clipboard.readText();
+        let elem = document.createElement('div');
+        elem.id = canvas.getNewId();
+
     }
 }
 
@@ -255,8 +282,8 @@ class Component {
 
         if (element.parentElement.getAttribute('type') === 'text' || element.getAttribute('type') === 'text') {
             document.querySelector('#text-info').style.display = "unset";
-            document.querySelector('#text-content').value = document.querySelector('.active p').innerHTML;
-            document.querySelector('#text-font-size').value = document.querySelector('.active p').style.fontSize.slice(0, -2);
+            document.querySelector('#text-content').value = document.querySelector('.active p').innerHTML ? document.querySelector('.active p').innerHTML : "";
+            document.querySelector('#text-font-size').value = document.querySelector('.active').style.fontSize.slice(0, -2);
         } else {
             document.querySelector('#text-info').style.display = "none";
         }
@@ -303,7 +330,6 @@ class Component {
 
         const corners = document.querySelectorAll('#' + id + ' .controller');
         corners.forEach(function (element) {
-            console.log("Added listener to ", element)
             element.addEventListener("dragover", (e) => {
                 e.preventDefault();
             }, false);
@@ -339,23 +365,23 @@ class Rectangle extends Component {
 
     static addRect() {
         let rect = document.createElement('div');
-        let id = 'rect' + canvas.length;
+        let numId = canvas.getNewId();
+        let id = 'rect' + numId;
         rect.setAttribute('id', id);
         rect.setAttribute('class', 'rect');
         rect.setAttribute('type', 'rect');
         Component.addFrame(rect);
         document.getElementById("canvas").appendChild(rect);
-        rect = new Rectangle({ id: canvas.length });
+        rect = new Rectangle({ id: numId });
         canvas.elements.push(rect);
-        canvas.length += 1;
         return id;
     }
 }
 
-class Text extends Component {
-    constructor({ id, text = "Add text", fontSize = 15, color = "#00000d", textAlign = "center", height = 30, width = 200 }) {
+class TextBox extends Component {
+    constructor({ id, text = "", fontSize = 15, color = "#00000d", textAlign = "center", height = 30, width = 200 }) {
         super();
-        this.id = 'text' + String(id);
+        this.id = 'text' + id;
         this.element = document.getElementById('text' + id);
         this.text = text;
         this.fontSize = fontSize;
@@ -364,12 +390,12 @@ class Text extends Component {
         this.height = height;
         this.width = width;
         Component.changeShape(this.element, { height, width, zIndex: id });
-        Text.initText(this.element, { text, fontSize, color, textAlign });
+        TextBox.initText(this.element, { text, fontSize, color, textAlign });
     }
 
     static initText(element, args) {
         element.style.fontSize = args.fontSize;
-        element.children[0].innerHTML = args.text;
+        element.children[0].innerHTML = "";
         element.style.color = args.color;
         element.style.textAlign = args.textAlign;
     }
@@ -386,27 +412,32 @@ class Text extends Component {
     }
 
     static handleContentChange(e) {
-        canvas.active.childNodes[0].innerHTML = e.target.value ? e.target.value : "Add text";
+        if (document.querySelector('.active p').value) {
+            document.querySelector('.active p').innerHTML = document.querySelector('#text-content').placeholder;
+        }
+        canvas.active.childNodes[0].innerHTML = e.target.value ? e.target.value : e.target.placeholder;
     }
 
     static handleFontSizeChange(e) {
+        if (e.target.value < 0) {
+            document.querySelector('#text-font-size').value = "1px";
+        }
         canvas.active.childNodes[0].style.fontSize = e.target.value;
     }
 
     static addText() {
         let text = document.createElement('div');
         let p = document.createElement('p');
-        p.innerHTML = "Add text";
         text.appendChild(p);
-        let id = 'text' + canvas.length;
+        let numId = canvas.getNewId();
+        let id = 'text' + numId;
         text.setAttribute('id', id);
         text.setAttribute('class', 'text');
         text.setAttribute('type', 'text');
-        Text.addFrame(text);
+        TextBox.addFrame(text);
         document.getElementById("canvas").appendChild(text);
-        text = new Text({ id: canvas.length });
+        text = new TextBox({ id: numId });
         canvas.elements.push(text);
-        canvas.length += 1;
         return id;
     }
 }
@@ -448,15 +479,15 @@ document.getElementById("add-rect").addEventListener("click", (e) => {
 }, false);
 
 document.getElementById("add-text").addEventListener("click", (e) => {
-    const id = Text.addText();
+    const id = TextBox.addText();
 
     const textElement = document.querySelector("#" + id);
     textElement.addEventListener("click", (e) => {
-        Text.setElementActive(e.target);
+        TextBox.setElementActive(e.target);
     }, false);
 
     document.querySelector("#" + id + " .ghost").addEventListener("click", (e) => {
-        Text.setElementActive(e.target.parentElement);
+        TextBox.setElementActive(e.target.parentElement);
     }, false);
 
     const corners = document.querySelectorAll('#' + id + ' .controller');
@@ -471,16 +502,16 @@ document.getElementById("add-text").addEventListener("click", (e) => {
 
         element.addEventListener("dragend", (e) => {
             element.style.opacity = 1;
-            Text.resizeGhost();
+            TextBox.resizeGhost();
         }, false);
 
         element.addEventListener("drag", (e) => {
-            Text.outputInfo(e.target.parentElement);
+            TextBox.outputInfo(e.target.parentElement);
             if (!e.screenX && !e.screenY) return;
-            Text.resize(e.offsetX, e.offsetY, e.target.classList);
+            TextBox.resize(e.offsetX, e.offsetY, e.target.classList);
         }, false);
     });
-    Text.setElementActive(document.querySelector("#" + id));
+    TextBox.setElementActive(document.querySelector("#" + id));
 }, false);
 
 document.querySelector("#canvas").addEventListener("click", (e) => {
@@ -497,9 +528,9 @@ document.querySelector("#canvas").addEventListener("click", (e) => {
 
 document.querySelector("#color-info").addEventListener("input", Component.handleColorChange, false);
 
-document.querySelector("#text-content").addEventListener("input", Text.handleContentChange, false);
+document.querySelector("#text-content").addEventListener("input", TextBox.handleContentChange, false);
 
-document.querySelector("#text-font-size").addEventListener("input", Text.handleFontSizeChange, false);
+document.querySelector("#text-font-size").addEventListener("input", TextBox.handleFontSizeChange, false);
 
 document.querySelector("#save-file").addEventListener("click", FileHandlers.saveFile, false);
 
