@@ -10,6 +10,15 @@ var canvas = {
     getNewId: () => {
         canvas.length += 1;
         return canvas.length - 1;
+    },
+    populateCanvas: () => {
+        let cNodes = document.querySelector('#canvas').childNodes;
+        for (node of cNodes) {
+            canvas.length = parseInt(node.id.slice(4)) + 1;
+            canvas.elements.push(node);
+        }
+        canvas.active = canvas.elements[cNodes.length - 1];
+        console.log(canvas.active);
     }
 };
 
@@ -51,6 +60,7 @@ class FileHandlers {
                     components[i].classList.remove('active');
                     Component.addEventListeners(components[i].id);
                 }
+                canvas.populateCanvas();
             };
             reader.readAsText(file);
         }
