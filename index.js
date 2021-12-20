@@ -1,5 +1,9 @@
 // TODO: Need to learn OpenGL
 
+console.log("Welcome to my code!");
+
+const event = new Event('paste');
+
 var canvas = {
     length: 0, elements: [], active: null, copied: null, reset: () => {
         canvas.length = 0;
@@ -98,7 +102,6 @@ class KeyboardListenerHandlers { // Utility class
                 break;
             case 67: // C
                 e.metaKey || e.ctrlKey ? KeyboardListenerHandlers.handleCtrlC(e) : null;
-                console.log("hmm")
                 break;
             case 82: // R
                 e.shiftKey ? KeyboardListenerHandlers.handleShiftR() : null;
@@ -132,18 +135,22 @@ class KeyboardListenerHandlers { // Utility class
     }
 
     static handleCtrlC(e) {
-        try {
-            navigator.clipboard.writeText(document.querySelector('.active').innerHTML);
-        } catch (e) {
-
-        }
+        canvas.copied = canvas.active;
+        console.log(canvas.copied.id);
     }
 
     static async handleCtrlV(e) {
-        let cb = await navigator.clipboard.readText();
-        let elem = document.createElement('div');
-        elem.id = canvas.getNewId();
-
+        switch (canvas.copied.getAttribute('type')) {
+            case "rect":
+                // let newRect = canvas.copied.cloneNode(true);
+                // newRect.id = 'rect' + canvas.getNewId();
+                // document.getElementById("canvas").appendChild(newRect);
+                Rectangle.clone(canvas.copied);
+                break;
+            case "text":
+                console.log("text");
+                break;
+        }
     }
 }
 
@@ -315,6 +322,8 @@ class Component {
     static changeShape(element, args) {
         element.style.width = args.width + "px";
         element.style.height = args.height + "px";
+        element.style.top = args.top + "px";
+        element.style.left = args.left + "px";
         element.style.zIndex = String.toString(args.zIndex);
     }
 
@@ -329,6 +338,7 @@ class Component {
             corner.setAttribute('draggable', 'true')
             element.appendChild(corner);
         }
+        // Component.resizeGhost();
     }
 
     static addEventListeners(id) {
@@ -367,27 +377,56 @@ class Component {
 }
 
 class Rectangle extends Component {
-    constructor({ id, height = 100, width = 100 }) {
+    constructor(id, element = null) {
         super();
-        this.id = 'rect' + String(id);
-        this.element = document.getElementById('rect' + id);
-        this.height = height;
-        this.width = width;
-        Component.changeShape(this.element, { height, width, zIndex: id });
-    }
 
-    static addRect() {
+        if (element) {
+            console.log("Exec:", element);
+            this.numId = id;
+            this.id = 'rect' + this.numId;
+            let rect = element.cloneNode();
+            rect.id = this.id;
+            Component.addFrame(rect);
+            document.getElementById("canvas").appendChild(rect);
+            this.element = rect;
+            canvas.elements.push(this);
+            return this;
+        }
+
+        this.numId = id;
+        this.id = 'rect' + this.numId;
         let rect = document.createElement('div');
-        let numId = canvas.getNewId();
-        let id = 'rect' + numId;
-        rect.setAttribute('id', id);
+        rect.setAttribute('id', this.id);
         rect.setAttribute('class', 'rect');
         rect.setAttribute('type', 'rect');
         Component.addFrame(rect);
         document.getElementById("canvas").appendChild(rect);
-        rect = new Rectangle({ id: numId });
-        canvas.elements.push(rect);
-        return id;
+        this.element = document.getElementById(this.id);
+        Component.changeShape(this.element, { height: 100, width: 100, top: 10, left: 10, zIndex: this.numId });
+        canvas.elements.push(this);
+        return this;
+    }
+
+    static clone(element) {
+        let newRect = new Rectangle(canvas.getNewId());
+        let newElement = element.cloneNode(true)
+        newElement.id = newRect.id;
+        newRect.element = newElement;
+
+
+        // let rect = document.createElement('div');
+        // rect.setAttribute('id', this.id);
+        // rect.setAttribute('class', 'rect');
+        // rect.setAttribute('type', 'rect');
+        // Component.addFrame(rect);
+        // document.getElementById("canvas").appendChild(rect);
+
+        // this.element = document.getElementById(this.id);
+
+        // Component.changeShape(this.element, { height, width, zIndex: id, top, left });
+
+        // canvas.elements.push(this);
+        // return { id: this.id };
     }
 }
 
@@ -453,7 +492,9 @@ class TextBox extends Component {
 }
 
 document.getElementById("add-rect").addEventListener("click", (e) => {
-    const id = Rectangle.addRect();
+    const { id } = new Rectangle(canvas.getNewId());
+
+    console.log(id);
 
     const rectElement = document.querySelector("#" + id);
     rectElement.addEventListener("click", (e) => {
